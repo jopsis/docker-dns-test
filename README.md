@@ -2,6 +2,8 @@
 
 A comprehensive DNS testing system with real-time web monitoring, built with Python, FastAPI, and Docker. Continuously tests multiple domains against multiple DNS servers with WebSocket-powered live updates and structured JSONL logging.
 
+![DNS Test System Dashboard](screen.jpg)
+
 ## Features
 
 - **Continuous Testing**: Automated DNS resolution tests running at configurable intervals
