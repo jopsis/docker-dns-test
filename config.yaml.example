@@ -1,0 +1,72 @@
+# DNS Test System Configuration
+# Copy this file to config.yaml and modify as needed
+
+# DNS servers to test against
+dns_servers:
+  - name: "Google DNS Primary"
+    ip: "8.8.8.8"
+    port: 53
+  - name: "Google DNS Secondary"
+    ip: "8.8.4.4"
+    port: 53
+  - name: "Cloudflare DNS"
+    ip: "1.1.1.1"
+    port: 53
+  - name: "Cloudflare DNS Secondary"
+    ip: "1.0.0.1"
+    port: 53
+  - name: "Quad9 DNS"
+    ip: "9.9.9.9"
+    port: 53
+
+# Domains to resolve
+domains:
+  - "google.com"
+  - "github.com"
+  - "stackoverflow.com"
+  - "reddit.com"
+  - "amazon.com"
+  - "wikipedia.org"
+  - "youtube.com"
+  - "twitter.com"
+  - "linkedin.com"
+  - "facebook.com"
+
+# Testing parameters
+testing:
+  # Interval between test iterations (seconds)
+  interval_seconds: 5
+
+  # Timeout for each DNS query (seconds)
+  timeout_seconds: 3
+
+  # Maximum number of concurrent DNS queries
+  max_concurrent_queries: 10
+
+# Logging configuration
+logging:
+  # Enable/disable logging to file
+  enabled: true
+
+  # Path to log file (JSONL format)
+  file_path: "/app/logs/dns_results.jsonl"
+
+  # Maximum log file size before rotation (MB)
+  max_file_size_mb: 100
+
+  # Number of rotated files to keep
+  rotation_count: 5
+
+# Web server configuration
+web:
+  # Host to bind to (0.0.0.0 for all interfaces)
+  host: "0.0.0.0"
+
+  # Port to listen on
+  port: 8000
+
+  # Maximum number of WebSocket connections
+  max_websocket_connections: 50
+
+  # Size of result history buffer (in memory)
+  history_buffer_size: 1000

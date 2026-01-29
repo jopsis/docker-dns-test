@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  dns-tester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dns-tester
+    ports:
+      - "${HOST_PORT:-8900}:8900"
+    volumes:
+      # Mount config file (read-only)
+      - ./config.yaml:/app/config.yaml:ro
+      # Mount logs directory
+      - ./logs:/app/logs
+    environment:
+      # Environment variable overrides
+      - DNS_TEST_INTERVAL=${DNS_TEST_INTERVAL:-5}
+      - DNS_TEST_TIMEOUT=${DNS_TEST_TIMEOUT:-3}
+      - DNS_MAX_CONCURRENT=${DNS_MAX_CONCURRENT:-10}
+      - LOG_ENABLED=${LOG_ENABLED:-true}
+      - LOG_FILE_PATH=${LOG_FILE_PATH:-/app/logs/dns_results.jsonl}
+      - WEB_HOST=${WEB_HOST:-0.0.0.0}
+      - WEB_PORT=${WEB_PORT:-8900}
+      - TZ=${TZ:-UTC}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    networks:
+      - dns-test-network
+    dns:
+      # Use system DNS
+      - 8.8.8.8
+      - 1.1.1.1
+networks:
+  dns-test-network:
+    driver: bridge

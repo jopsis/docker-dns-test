@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNS Test System - Real-time Monitoring</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 DNS Test System</h1>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">Status:</span>
+                    <span id="connection-status" class="status-badge disconnected">Disconnected</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Iteration:</span>
+                    <span id="iteration-count" class="status-value">-</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Success Rate:</span>
+                    <span id="success-rate" class="status-value">-</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Avg Response:</span>
+                    <span id="avg-response" class="status-value">-</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Configuration Section -->
+            <section class="card">
+                <h2 class="collapsible-header" onclick="toggleSection('config')">
+                    Configuration
+                    <span class="collapse-icon" id="config-icon">▼</span>
+                </h2>
+                <div class="config-grid collapsible-content collapsed" id="config-content">
+                    <div class="config-item">
+                        <strong>Domains:</strong>
+                        <div id="config-domains" class="config-value">Loading...</div>
+                    </div>
+                    <div class="config-item">
+                        <strong>DNS Servers:</strong>
+                        <div id="config-servers" class="config-value">Loading...</div>
+                    </div>
+                    <div class="config-item">
+                        <strong>Test Interval:</strong>
+                        <span id="config-interval" class="config-value">-</span>
+                    </div>
+                    <div class="config-item">
+                        <strong>Query Timeout:</strong>
+                        <span id="config-timeout" class="config-value">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Section -->
+            <section class="card">
+                <h2>DNS Server Statistics</h2>
+                <div id="server-stats" class="stats-grid">
+                    <p class="loading">Waiting for data...</p>
+                </div>
+            </section>
+
+            <!-- Recent Results Section -->
+            <section class="card">
+                <h2>Recent Test Results</h2>
+                <div class="table-controls">
+                    <label>
+                        <input type="checkbox" id="show-failures-only" />
+                        Show failures only
+                    </label>
+                    <button id="clear-table" class="btn-secondary">Clear Table</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Iteration</th>
+                                <th>Domain</th>
+                                <th>DNS Server</th>
+                                <th>Status</th>
+                                <th>Response Time</th>
+                                <th>IP Addresses</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-tbody">
+                            <tr>
+                                <td colspan="8" class="loading">Waiting for results...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>DNS Test System v1.0.0 | Real-time monitoring with WebSocket</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
