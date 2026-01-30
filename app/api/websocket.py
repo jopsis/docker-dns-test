@@ -136,7 +136,7 @@ async def websocket_endpoint(websocket: WebSocket):
         # Send recent results if available
         engine = get_test_engine()
         if engine:
-            recent_results = engine.get_latest_results(limit=10)
+            recent_results = engine.get_latest_results(limit=500)
             if recent_results:
                 await ws_manager.send_personal_message(
                     {

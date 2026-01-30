@@ -27,6 +27,7 @@ async def get_status():
         raise HTTPException(status_code=503, detail="Test engine not initialized")
 
     statistics = engine.get_statistics()
+    global_statistics = engine.get_global_statistics()
 
     from .websocket import ws_manager
 
@@ -35,6 +36,7 @@ async def get_status():
         "iteration_count": engine.iteration_count,
         "active_websocket_connections": ws_manager.get_connection_count(),
         "statistics": statistics,
+        "global_statistics": global_statistics,
         "log_info": logger.get_file_info() if logger else None,
         "config_loaded": config is not None
     }

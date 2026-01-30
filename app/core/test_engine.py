@@ -48,6 +48,14 @@ class TestEngine:
         # Running flag
         self.is_running = False
 
+        # Global counters (never reset, persist for lifetime of container)
+        self.global_total_queries = 0
+        self.global_successful_queries = 0
+        self.global_failed_queries = 0
+        self.global_errors_by_type: Dict[str, int] = {}
+        self.global_errors_by_domain: Dict[str, int] = {}
+        self.global_errors_by_server: Dict[str, int] = {}
+
         # Callbacks
         self.on_result_callback: Optional[Callable] = None
         self.logger_callback: Optional[Callable] = None
@@ -89,6 +97,9 @@ class TestEngine:
                     result["timestamp"] = timestamp
                     result["iteration"] = self.iteration_count
 
+                # Update global counters
+                self._update_global_counters(results)
+
                 # Store in buffer
                 self.results_buffer.extend(results)
 
@@ -121,6 +132,33 @@ class TestEngine:
                 print(f"Error in test engine loop: {e}")
                 # Continue running even if there's an error
                 await asyncio.sleep(self.interval_seconds)
+
+    def _update_global_counters(self, results: List[Dict]):
+        """
+        Update global counters that persist for the lifetime of the container.
+
+        Args:
+            results: List of DNS test results from current iteration
+        """
+        for result in results:
+            self.global_total_queries += 1
+
+            if result["success"]:
+                self.global_successful_queries += 1
+            else:
+                self.global_failed_queries += 1
+
+                # Count by error type
+                error = result.get("error", "UNKNOWN")
+                self.global_errors_by_type[error] = self.global_errors_by_type.get(error, 0) + 1
+
+                # Count by domain
+                domain = result["domain"]
+                self.global_errors_by_domain[domain] = self.global_errors_by_domain.get(domain, 0) + 1
+
+                # Count by server
+                server_name = result["dns_server"]["name"]
+                self.global_errors_by_server[server_name] = self.global_errors_by_server.get(server_name, 0) + 1
 
     async def stop(self):
         """Stop the test engine."""
@@ -235,4 +273,45 @@ class TestEngine:
             "stats_by_server": stats_by_server,
             "stats_by_domain": stats_by_domain,
             "iteration_count": self.iteration_count
+        }
+
+    def get_global_statistics(self) -> Dict:
+        """
+        Get global statistics that persist for the lifetime of the container.
+        These counters never reset and track all queries since startup.
+
+        Returns:
+            Dictionary with global statistics:
+                - total_queries: Total queries since startup
+                - successful_queries: Total successful queries
+                - failed_queries: Total failed queries
+                - success_rate: Overall success rate percentage
+                - iteration_count: Total iterations completed
+                - errors_by_type: Dictionary of error types and counts
+                - errors_by_domain: Dictionary of domains and error counts
+                - errors_by_server: Dictionary of servers and error counts
+        """
+        return {
+            "total_queries": self.global_total_queries,
+            "successful_queries": self.global_successful_queries,
+            "failed_queries": self.global_failed_queries,
+            "success_rate": round(
+                self.global_successful_queries / self.global_total_queries * 100, 2
+            ) if self.global_total_queries > 0 else 0.0,
+            "iteration_count": self.iteration_count,
+            "errors_by_type": dict(sorted(
+                self.global_errors_by_type.items(),
+                key=lambda x: x[1],
+                reverse=True
+            )),
+            "errors_by_domain": dict(sorted(
+                self.global_errors_by_domain.items(),
+                key=lambda x: x[1],
+                reverse=True
+            )),
+            "errors_by_server": dict(sorted(
+                self.global_errors_by_server.items(),
+                key=lambda x: x[1],
+                reverse=True
+            ))
         }

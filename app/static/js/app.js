@@ -16,6 +16,7 @@ class DNSTestClient {
     init() {
         this.setupEventListeners();
         this.connect();
+        this.startGlobalStatsUpdater();
     }
 
     setupEventListeners() {
@@ -285,6 +286,65 @@ class DNSTestClient {
                 </div>
             `;
         }).join('');
+    }
+
+    startGlobalStatsUpdater() {
+        // Update global stats immediately
+        this.updateGlobalStatistics();
+
+        // Update every 5 seconds
+        setInterval(() => {
+            this.updateGlobalStatistics();
+        }, 5000);
+    }
+
+    async updateGlobalStatistics() {
+        try {
+            const response = await fetch('/api/status');
+            if (!response.ok) return;
+
+            const data = await response.json();
+            const global = data.global_statistics;
+
+            if (!global) return;
+
+            // Update summary numbers
+            document.getElementById('global-total-queries').textContent = global.total_queries.toLocaleString();
+            document.getElementById('global-successful').textContent = global.successful_queries.toLocaleString();
+            document.getElementById('global-failed').textContent = global.failed_queries.toLocaleString();
+            document.getElementById('global-success-rate').textContent = `${global.success_rate}%`;
+            document.getElementById('global-iterations').textContent = global.iteration_count.toLocaleString();
+
+            // Update errors by type
+            this.renderErrorBreakdown('errors-by-type', global.errors_by_type);
+
+            // Update errors by domain
+            this.renderErrorBreakdown('errors-by-domain', global.errors_by_domain);
+
+            // Update errors by server
+            this.renderErrorBreakdown('errors-by-server', global.errors_by_server);
+
+        } catch (error) {
+            console.error('Error updating global statistics:', error);
+        }
+    }
+
+    renderErrorBreakdown(elementId, errorData) {
+        const container = document.getElementById(elementId);
+
+        if (!errorData || Object.keys(errorData).length === 0) {
+            container.innerHTML = '<p class="loading">No errors yet...</p>';
+            return;
+        }
+
+        container.innerHTML = Object.entries(errorData)
+            .slice(0, 10) // Show top 10
+            .map(([name, count]) => `
+                <div class="error-item">
+                    <span class="error-item-label">${name}</span>
+                    <span class="error-item-count">${count.toLocaleString()}</span>
+                </div>
+            `).join('');
     }
 }
 

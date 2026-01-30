@@ -57,9 +57,62 @@
                 </div>
             </section>
 
+            <!-- Global Statistics Section (Never Reset) -->
+            <section class="card">
+                <h2 class="collapsible-header" onclick="toggleSection('global-stats')">
+                    All-Time Statistics (Since Container Start)
+                    <span class="collapse-icon" id="global-stats-icon">▼</span>
+                </h2>
+                <div class="global-stats-container collapsible-content" id="global-stats-content">
+                    <div class="global-stats-summary">
+                        <div class="global-stat-item">
+                            <span class="global-stat-label">Total Queries:</span>
+                            <span class="global-stat-value" id="global-total-queries">-</span>
+                        </div>
+                        <div class="global-stat-item">
+                            <span class="global-stat-label">Successful:</span>
+                            <span class="global-stat-value success" id="global-successful">-</span>
+                        </div>
+                        <div class="global-stat-item">
+                            <span class="global-stat-label">Failed:</span>
+                            <span class="global-stat-value error" id="global-failed">-</span>
+                        </div>
+                        <div class="global-stat-item">
+                            <span class="global-stat-label">Success Rate:</span>
+                            <span class="global-stat-value" id="global-success-rate">-</span>
+                        </div>
+                        <div class="global-stat-item">
+                            <span class="global-stat-label">Total Iterations:</span>
+                            <span class="global-stat-value" id="global-iterations">-</span>
+                        </div>
+                    </div>
+
+                    <div class="global-errors-grid">
+                        <div class="error-breakdown">
+                            <h3>Errors by Type</h3>
+                            <div id="errors-by-type" class="error-list">
+                                <p class="loading">No errors yet...</p>
+                            </div>
+                        </div>
+                        <div class="error-breakdown">
+                            <h3>Errors by Domain</h3>
+                            <div id="errors-by-domain" class="error-list">
+                                <p class="loading">No errors yet...</p>
+                            </div>
+                        </div>
+                        <div class="error-breakdown">
+                            <h3>Errors by DNS Server</h3>
+                            <div id="errors-by-server" class="error-list">
+                                <p class="loading">No errors yet...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Statistics Section -->
             <section class="card">
-                <h2>DNS Server Statistics</h2>
+                <h2>DNS Server Statistics (Recent Buffer)</h2>
                 <div id="server-stats" class="stats-grid">
                     <p class="loading">Waiting for data...</p>
                 </div>
